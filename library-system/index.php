@@ -62,7 +62,7 @@ if(isset($_POST['register'])){
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav text-uppercase ml-auto">
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="about.html">About</a>
+            <a class="nav-link js-scroll-trigger" href="about.php">About</a>
           </li>
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="admin-login.php">Admin</a>
@@ -113,7 +113,7 @@ if(isset($_POST['register'])){
         <div class="col-md-4">
           <ul class="list-inline quicklinks">
             <li class="list-inline-item">
-              <a href="about.html"> &lt/&gt with ♥</a>
+              <a href="about.php"> &lt/&gt with ♥</a>
             </li>
           </ul>
         </div>
