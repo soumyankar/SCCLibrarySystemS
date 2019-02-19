@@ -21,6 +21,11 @@ $r3=mysqli_fetch_assoc($q3);
 $s4="Select count(*) from borrow_requests";
 $q4=mysqli_query($conn,$s4);
 $r4=mysqli_fetch_assoc($q4);
+
+$s5="Select count(*) from students where approved='No' ";
+$q5=mysqli_query($conn,$s5);
+$r5=mysqli_fetch_assoc($q5);
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -119,7 +124,7 @@ $r4=mysqli_fetch_assoc($q4);
 							<div class="col-xs-6 col-md-3 col-lg-3 no-padding">
 								<div class="panel panel-teal panel-widget border-right">
 									<div class="row no-padding"><em class="fa fa-xl fa-shopping-cart color-blue"></em>
-										<div class="large"><?php echo $r4['count(*)'];?></div>
+										<div class="large"><?php echo ($r4['count(*)']+$r5['count(*)']);?></div>
 										<div class="text-muted">New Requests</div>
 									</div>
 								</div>

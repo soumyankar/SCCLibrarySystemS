@@ -15,6 +15,26 @@ if($dec=='YES')
 	$unsql="update borrow_requests set status='Booked' where roll_id!='$rid' and book_id='$bid'";
 	$unq=mysqli_query($conn,$unsql);
 }
+if($dec=='return')
+{
+	$timestamp = date("Y-m-d");
+	$new= date('Y-m-d',strtotime($timestamp. '+ 14 days'));
+	$esql="update books_master set borrowed_by=NULL , availability='Available' , borrowed_at= NULL , due_date=NULL where access_code='$bid'";
+	echo $esql;
+	$eq=mysqli_query($conn,$esql);
+	$usql="delete from borrow_requests where roll_id='$rid' and book_id='$bid'";
+	$uq=mysqli_query($conn,$usql);
+}
+if($dec=='returnNO')
+{
+	$timestamp = date("Y-m-d");
+	$new= date('Y-m-d',strtotime($timestamp. '+ 14 days'));
+	$esql="update books_master set borrowed_by='NULL' , availability='Available' , borrowed_at= 'NULL' , due_date='NULL' where access_code='$bid'";
+	echo $esql;
+	$eq=mysqli_query($conn,$esql);
+	$unsql="update borrow_requests set status='Rejected' where roll_id='$rid' and book_id='$bid'";
+	$unq=mysqli_query($conn,$unsql);
+}
 else
 {
 	$usql="update borrow_requests set status='Rejected' where roll_id='$rid' and book_id='$bid'";

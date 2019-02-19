@@ -98,276 +98,29 @@ if(!isset($_SESSION['adminkey']))
 				<!--/.row-->
 				<div class="row">
 					<div class="col-lg-12">
-						<h1 class="page-header">Manage Requests</h1>
+						<h1 class="page-header">Request Handler</h1>
 					</div>
 				</div>
-				<!--/.row-->		
+				<!--/.row-->
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="panel panel-default">
-							<div class="panel-heading">Borrow Requests</div>
+							<div class="panel-heading">Manage Requests</div>
 							<div class="panel-body">
-								<div class="bootstrap-table" style="">
-									<div class="fixed-table-toolbar" >
-										<div class="columns btn-group pull-right">
-											<button class="btn btn-default" type="button" name="refresh" title="Refresh"><i class="glyphicon glyphicon-refresh icon-refresh"></i></button><button class="btn btn-default" type="button" name="toggle" title="Toggle"><i class="glyphicon glyphicon glyphicon-list-alt icon-list-alt"></i></button>
-											<div class="keep-open btn-group" title="Columns">
-												<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="glyphicon glyphicon-th icon-th"></i> <span class="caret"></span></button>
-												<ul class="dropdown-menu" role="menu">
-													<li><label><input type="checkbox" data-field="id" value="1" checked="checked">Book ID</label></li>
-													<li><label><input type="checkbox" data-field="name" value="2" checked="checked">Student Name</label></li>
-													<li><label><input type="checkbox" data-field="price" value="3" checked="checked">Availability</label></li>
-												</ul>
-											</div>
-										</div>
-										<div class="pull-right search"><input name="manage_search" class="form-control" type="text" placeholder="Search"></div>
-									</div>
-									<div class="fixed-table-container">
-										<div class="fixed-table-header">
-											<table></table>
-										</div>
-										<div class="fixed-table-body">
-											<div class="fixed-table-loading" style="top: 37px; display: none;">Loading, please wait…</div>
-											<table data-toggle="table" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-search="true" data-select-item-name="toolbar1" data-pagination="true" data-sort-name="name" data-sort-order="desc" class="table table-hover" style="overflow-x: auto; margin-top: 0px;">
-												<thead>
-													<tr>
-														<th style="">
-															<div data-field="id" class="th-inner sortable">Book ID</div>
-															<div class="fht-cell"></div>
-														</th>
-
-														<th style="">
-															<div data-field="id" class="th-inner sortable">Book</div>
-															<div class="fht-cell"></div>
-														</th>
-
-														<th style="">
-															<div data-field="name" class="th-inner sortable">Student Name</div>
-															<div class="fht-cell"></div>
-														</th> 
-														<th style="">
-															<div data-field="price" class="th-inner sortable">Requested At:</div>
-															<div class="fht-cell"></div>
-														</th>
-														<th style="">
-															<div data-field="availability" class="th-inner sortable">Availability</div>
-															<div class="fht-cell"></div>
-														</th>
-														<th style="">
-															<div data-field="decision" class="th-inner sortable">Decision</div>
-															<div class="fht-cell"></div>
-														</th>
-													</tr>
-												</thead>
-												<tbody>
-													<?php 
-													if(isset($_POST['manage_search']))
-													{
-														$q9=$_POST['manage_search'];
-														$sql3="Select * from borrow_requests where roll_id like '%{$q9}%' or book_id like '%{$q9}%'";
-													}
-													else
-													{
-														$sql3="Select * from borrow_requests where status IS NULL ";
-													}
-													$query3=mysqli_query($conn,$sql3);
-													$found=mysqli_num_rows($query3);
-													if(!$found)
-													{
-														echo "<div class=\"col-md-12 panel panel-default\"><h4>--No borrow requests :(--</h4></div";
-													}
-													else
-													{
-														while($found=mysqli_fetch_array($query3,MYSQLI_ASSOC))
-														{
-															$bid=$found['book_id'];
-															$rid=$found['roll_id'];
-															$sql4="Select * from books_master where access_code='$bid' ";
-															$sql5="Select * from students where roll_id='$rid'";
-															$q4=mysqli_query($conn,$sql4);
-															$result4=mysqli_fetch_assoc($q4);
-															$q5=mysqli_query($conn,$sql5);
-															$result5=mysqli_fetch_assoc($q5);
-															$class="info";
-															if($result4['availability']=="Available")
-																{$class="success";}
-															if($result4['availability']=="Missing")
-																{$class="warning";}
-															if($result4['availability']=="Issued")
-																{$class="danger";}	
-															?>
-															<tr data-index="0">
-																<td style=""><?php echo $result4['access_code'];?></td>
-																<td style=""><?php echo $result4['name'] . " by " . $result4['author'];?></td>
-																<td style=""><?php echo $result5['name'];?></td>
-																<td style=""><?php echo $found['requested_at'];?></td>
-																<td style=""><button type="button" href="#" class="btn btn-sm btn-<?php echo $class;?>"><?php echo $result4['availability'];?></button></td>
-																<td style=""><button type="button" style="margin-bottom:5px;" class="btn-sm btn-success"><a onclick="return confirm('Are you sure?')" href="delete.php?id=<?php echo $result4['access_code']."&roll=". $rid."&decision=YES";?>">Approve</a></button>
-																	<button type="button" style="display: inline-block; padding: 5px;" href="#" class="btn-sm btn-danger"><a onclick="return confirm('Are you sure?')" href="delete.php?id=<?php echo $result4['access_code']."&roll=". $rid."&decision=NO";?>">Decline</a></button></td>
-																</tr>
-																<?php
-															}
-														}
-														?>
-													</tbody>
-												</table>
-											</div>
-											<div class="fixed-table-pagination">
-												<div class="pull-left pagination-detail">
-													<span class="pagination-info">Showing 1 to 10 of 21 rows</span>
-													<span class="page-list">
-														<span class="btn-group dropup">
-															<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="page-size">10</span> <span class="caret"></span></button>
-															<ul class="dropdown-menu" role="menu">
-																<li class="active"><a href="javascript:void(0)">10</a></li>
-																<li><a href="javascript:void(0)">25</a></li>
-																<li><a href="javascript:void(0)">50</a></li>
-																<li><a href="javascript:void(0)">100</a></li>
-															</ul>
-														</span>
-														records per page
-													</span>
-												</div>
-												<div class="pull-right pagination">
-													<ul class="pagination">
-														<li class="page-first disabled"><a href="javascript:void(0)">&lt;&lt;</a></li>
-														<li class="page-pre disabled"><a href="javascript:void(0)">&lt;</a></li>
-														<li class="page-number active disabled"><a href="javascript:void(0)">1</a></li>
-														<li class="page-number"><a href="javascript:void(0)">2</a></li>
-														<li class="page-number"><a href="javascript:void(0)">3</a></li>
-														<li class="page-next"><a href="javascript:void(0)">&gt;</a></li>
-														<li class="page-last"><a href="javascript:void(0)">&gt;&gt;</a></li>
-													</ul>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="clearfix"></div>
-								</div>
+							<div class="col-md-12">
+							<button onclick="toggleTable();" class="btn btn-md btn-primary" style="width: 140px; font-size: 13px;">Approval Requests</button>
+							<button onclick="toggleTable2();" class="btn btn-md btn-info" style="width: 140px; font-size: 13px;">Borrow Requests</button>
+							<button onclick="toggleTable3();" class="btn btn-md btn-primary" style="width: 140px; font-size: 13px;">Return Requests</button>
+							<button onclick="toggleTable4();" class="btn btn-md btn-info" style="width: 140px; font-size: 13px;">Addition Requests</button>
+							</div>					
 							</div>
-						</div>	
-						<div class="col-lg-12">
-							<div class="panel panel-default">
-								<div class="panel-heading">Registration Approvals</div>
-								<div class="panel-body">
-									<div class="bootstrap-table" style="">
-										<div class="fixed-table-toolbar" >
-											<div class="columns btn-group pull-right">
-												<button class="btn btn-default" type="button" name="refresh" title="Refresh"><i class="glyphicon glyphicon-refresh icon-refresh"></i></button><button class="btn btn-default" type="button" name="toggle" title="Toggle"><i class="glyphicon glyphicon glyphicon-list-alt icon-list-alt"></i></button>
-												<div class="keep-open btn-group" title="Columns">
-													<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="glyphicon glyphicon-th icon-th"></i> <span class="caret"></span></button>
-													<ul class="dropdown-menu" role="menu">
-														<li><label><input type="checkbox" data-field="id" value="1" checked="checked">Roll ID</label></li>
-														<li><label><input type="checkbox" data-field="name" value="2" checked="checked">Student Name</label></li>
-														<li><label><input type="checkbox" data-field="price" value="3" checked="checked">Availability</label></li>
-													</ul>
-												</div>
-											</div>
-											<div class="pull-right search"><input class="form-control" method="post" name="borrow_search" type="text" placeholder="Search"></div> 
-										</div>
-										<div class="fixed-table-container">
-											<div class="fixed-table-header">
-												<table></table>
-											</div>
-											<div class="fixed-table-body">
-												<div class="fixed-table-loading" style="top: 37px; display: none;">Loading, please wait…</div>
-												<table data-toggle="table" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-search="true" data-select-item-name="toolbar1" data-pagination="true" data-sort-name="name" data-sort-order="desc" class="table table-hover" style="overflow-x: auto; margin-top: 0px;">
-													<thead>
-														<tr>
-															<th style="">
-																<div data-field="id" class="th-inner sortable">Roll Number</div>
-																<div class="fht-cell"></div>
-															</th>
-
-															<th style="">
-																<div data-field="id" class="th-inner sortable">Student Name</div>
-																<div class="fht-cell"></div>
-															</th>
-
-															<th style="">
-																<div data-field="name" class="th-inner sortable">Year</div>
-																<div class="fht-cell"></div>
-															</th>
-															<th style="">
-																<div data-field="decision" class="th-inner sortable">Decision</div>
-																<div class="fht-cell"></div>
-															</th>
-														</tr>
-													</thead>
-													<tbody>
-														<?php 
-														if(isset($_POST['borrow_search']))
-														{
-															$q9=$_POST['borrow_search'];
-															$sql3="Select * from students where roll_id like '%{$q9}%' or name like '%{$q9}%'";
-														}
-														else
-														{
-															$sql3="Select * from students where approved='no' ";
-														}
-														$query3=mysqli_query($conn,$sql3);
-														$found=mysqli_num_rows($query3);
-														if(!$found)
-														{
-															echo "<div class=\"col-md-12 panel panel-default\"><h4>--No registration approval requests :(--</h4></div";
-														}
-														else
-														{
-															while($found=mysqli_fetch_array($query3,MYSQLI_ASSOC))
-															{
-																?>
-																<tr data-index="0">
-																	<td style=""><?php echo $found['roll_id'];?></td>
-																	<td style=""><?php echo $found['name'];?></td>
-																	<td style=""><?php echo $found['year'];?></td>
-																	<td style=""><button type="button" href="#" style="margin-bottom:5px;" class="btn-sm btn-success"><a onclick="return confirm('Are you sure?')" href="approve.php?id=<?php echo $found['roll_id']."&decision=YES";?>">Approve</a></button>
-																		<button type="button" style="display: inline-block; padding: 5px;" href="#" class="btn-sm btn-danger"><a onclick="return confirm('Are you sure?')" href="approve.php?id=<?php echo $found['roll_id']."&decision=NO";?>">Decline</a></button></td>
-																	</tr>
-																	<?php
-																}
-															}
-															?>
-														</tbody>
-													</table>
-												</div>
-												<div class="fixed-table-pagination">
-													<div class="pull-left pagination-detail">
-														<span class="pagination-info">Showing 1 to 10 of 21 rows</span>
-														<span class="page-list">
-															<span class="btn-group dropup">
-																<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="page-size">10</span> <span class="caret"></span></button>
-																<ul class="dropdown-menu" role="menu">
-																	<li class="active"><a href="javascript:void(0)">10</a></li>
-																	<li><a href="javascript:void(0)">25</a></li>
-																	<li><a href="javascript:void(0)">50</a></li>
-																	<li><a href="javascript:void(0)">100</a></li>
-																</ul>
-															</span>
-															records per page
-														</span>
-													</div>
-													<div class="pull-right pagination">
-														<ul class="pagination">
-															<li class="page-first disabled"><a href="javascript:void(0)">&lt;&lt;</a></li>
-															<li class="page-pre disabled"><a href="javascript:void(0)">&lt;</a></li>
-															<li class="page-number active disabled"><a href="javascript:void(0)">1</a></li>
-															<li class="page-number"><a href="javascript:void(0)">2</a></li>
-															<li class="page-number"><a href="javascript:void(0)">3</a></li>
-															<li class="page-next"><a href="javascript:void(0)">&gt;</a></li>
-															<li class="page-last"><a href="javascript:void(0)">&gt;&gt;</a></li>
-														</ul>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="clearfix"></div>
-									</div>
-								</div>
-							</div>
-
-							<div class="col-lg-12">
+						</div>
+					</div>
+				</div>		
+						<div class="row">
+							<div class="col-lg-12" id="borrowTable" style="display: none;">
 								<div class="panel panel-default">
-									<div class="panel-heading">Book Addition Requests</div>
+									<div class="panel-heading">Borrow Requests</div>
 									<div class="panel-body">
 										<div class="bootstrap-table" style="">
 											<div class="fixed-table-toolbar" >
@@ -376,13 +129,13 @@ if(!isset($_SESSION['adminkey']))
 													<div class="keep-open btn-group" title="Columns">
 														<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="glyphicon glyphicon-th icon-th"></i> <span class="caret"></span></button>
 														<ul class="dropdown-menu" role="menu">
-															<li><label><input type="checkbox" data-field="id" value="1" checked="checked">Roll ID</label></li>
+															<li><label><input type="checkbox" data-field="id" value="1" checked="checked">Book ID</label></li>
 															<li><label><input type="checkbox" data-field="name" value="2" checked="checked">Student Name</label></li>
 															<li><label><input type="checkbox" data-field="price" value="3" checked="checked">Availability</label></li>
 														</ul>
 													</div>
 												</div>
-												<div class="pull-right search"><input class="form-control" name="addition_search" method="post" type="text" placeholder="Search"></div>
+												<div class="pull-right search"><input name="manage_search" class="form-control" type="text" placeholder="Search"></div>
 											</div>
 											<div class="fixed-table-container">
 												<div class="fixed-table-header">
@@ -393,94 +146,558 @@ if(!isset($_SESSION['adminkey']))
 													<table data-toggle="table" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-search="true" data-select-item-name="toolbar1" data-pagination="true" data-sort-name="name" data-sort-order="desc" class="table table-hover" style="overflow-x: auto; margin-top: 0px;">
 														<thead>
 															<tr>
-																<th style=""></th>
 																<th style="">
-																	<div data-field="id" class="th-inner sortable">Book Name</div>
+																	<div data-field="id" class="th-inner sortable">Book ID</div>
 																	<div class="fht-cell"></div>
 																</th>
 
 																<th style="">
-																	<div data-field="id" class="th-inner sortable">Author</div>
+																	<div data-field="id" class="th-inner sortable">Book</div>
 																	<div class="fht-cell"></div>
 																</th>
 
 																<th style="">
-																	<div data-field="name" class="th-inner sortable">Publisher</div>
+																	<div data-field="name" class="th-inner sortable">Student Name</div>
+																	<div class="fht-cell"></div>
+																</th> 
+																<th style="">
+																	<div data-field="price" class="th-inner sortable">Requested At:</div>
 																	<div class="fht-cell"></div>
 																</th>
-
 																<th style="">
-																	<div data-field="name" class="th-inner sortable">Requested by</div>
+																	<div data-field="availability" class="th-inner sortable">Availability</div>
+																	<div class="fht-cell"></div>
+																</th>
+																<th style="">
+																	<div data-field="decision" class="th-inner sortable">Decision</div>
 																	<div class="fht-cell"></div>
 																</th>
 															</tr>
 														</thead>
 														<tbody>
 															<?php 
-															if(isset($_POST['addition_search']))
+															if(isset($_POST['manage_search']))
 															{
-																$q10=$_POST['borrow_search'];
-																$sql5="Select * from book_requests where roll_id like '%{$q10}%' or name like '%{$q10}%'";
+																$q9=$_POST['manage_search'];
+																$sql3="Select * from borrow_requests where roll_id like '%{$q9}%' or book_id like '%{$q9}%'";
 															}
 															else
 															{
-																$sql5="Select * from book_requests ";
+																$sql3="Select * from borrow_requests where status IS NULL ";
 															}
-															$query5=mysqli_query($conn,$sql5);
-															$found2=mysqli_num_rows($query5);
-															?>
-															<tr data-index="0">
-																<?php
-																if(!$found2)
+															$query3=mysqli_query($conn,$sql3);
+															$found=mysqli_num_rows($query3);
+															if(!$found)
+															{
+																echo "<div class=\"col-md-12 panel panel-default\"><h4>--No borrow requests :(--</h4></div";
+															}
+															else
+															{
+																while($found=mysqli_fetch_array($query3,MYSQLI_ASSOC))
+																{
+																	$bid=$found['book_id'];
+																	$rid=$found['roll_id'];
+																	$sql4="Select * from books_master where access_code='$bid' ";
+																	$sql5="Select * from students where roll_id='$rid'";
+																	$q4=mysqli_query($conn,$sql4);
+																	$result4=mysqli_fetch_assoc($q4);
+																	$q5=mysqli_query($conn,$sql5);
+																	$result5=mysqli_fetch_assoc($q5);
+																	$class="info";
+																	if($result4['availability']=="Available")
+																		{$class="success";}
+																	if($result4['availability']=="Missing")
+																		{$class="warning";}
+																	if($result4['availability']=="Issued")
+																		{$class="danger";}	
+																	?>
+																	<tr data-index="0">
+																		<td style=""><?php echo $result4['access_code'];?></td>
+																		<td style=""><?php echo $result4['name'] . " by " . $result4['author'];?></td>
+																		<td style=""><?php echo $result5['name'];?></td>
+																		<td style=""><?php echo $found['requested_at'];?></td>
+																		<td style=""><button type="button" href="#" class="btn btn-sm btn-<?php echo $class;?>"><?php echo $result4['availability'];?></button></td>
+																		<td style=""><button type="button" style="margin-bottom:5px;" class="btn-sm btn-success"><a onclick="return confirm('Are you sure?')" href="delete.php?id=<?php echo $result4['access_code']."&roll=". $rid."&decision=YES";?>">Approve</a></button>
+																			<button type="button" style="display: inline-block; padding: 5px;" href="#" class="btn-sm btn-danger"><a onclick="return confirm('Are you sure?')" href="delete.php?id=<?php echo $result4['access_code']."&roll=". $rid."&decision=NO";?>">Decline</a></button></td>
+																		</tr>
+																		<?php
+																	}
+																}
+																?>
+															</tbody>
+														</table>
+													</div>
+													<div class="fixed-table-pagination">
+														<div class="pull-left pagination-detail">
+															<span class="pagination-info">Showing 1 to 10 of 21 rows</span>
+															<span class="page-list">
+																<span class="btn-group dropup">
+																	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="page-size">10</span> <span class="caret"></span></button>
+																	<ul class="dropdown-menu" role="menu">
+																		<li class="active"><a href="javascript:void(0)">10</a></li>
+																		<li><a href="javascript:void(0)">25</a></li>
+																		<li><a href="javascript:void(0)">50</a></li>
+																		<li><a href="javascript:void(0)">100</a></li>
+																	</ul>
+																</span>
+																records per page
+															</span>
+														</div>
+														<div class="pull-right pagination">
+															<ul class="pagination">
+																<li class="page-first disabled"><a href="javascript:void(0)">&lt;&lt;</a></li>
+																<li class="page-pre disabled"><a href="javascript:void(0)">&lt;</a></li>
+																<li class="page-number active disabled"><a href="javascript:void(0)">1</a></li>
+																<li class="page-number"><a href="javascript:void(0)">2</a></li>
+																<li class="page-number"><a href="javascript:void(0)">3</a></li>
+																<li class="page-next"><a href="javascript:void(0)">&gt;</a></li>
+																<li class="page-last"><a href="javascript:void(0)">&gt;&gt;</a></li>
+															</ul>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="clearfix"></div>
+										</div>
+									</div>
+								</div>
+							<div class="col-lg-12" id="returnTable" style="display: none;">
+								<div class="panel panel-default">
+									<div class="panel-heading">Return Requests</div>
+									<div class="panel-body">
+										<div class="bootstrap-table" style="">
+											<div class="fixed-table-toolbar" >
+												<div class="columns btn-group pull-right">
+													<div class="keep-open btn-group" title="Columns">
+														<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="glyphicon glyphicon-th icon-th"></i> <span class="caret"></span></button>
+														<ul class="dropdown-menu" role="menu">
+															<li><label><input type="checkbox" data-field="id" value="1" checked="checked">Book ID</label></li>
+															<li><label><input type="checkbox" data-field="name" value="2" checked="checked">Student Name</label></li>
+															<li><label><input type="checkbox" data-field="price" value="3" checked="checked">Availability</label></li>
+														</ul>
+													</div>
+												</div>
+												<div class="pull-right search"><input name="manage_search" class="form-control" type="text" placeholder="Search"></div>
+											</div>
+											<div class="fixed-table-container">
+												<div class="fixed-table-header">
+													<table></table>
+												</div>
+												<div class="fixed-table-body">
+													<div class="fixed-table-loading" style="top: 37px; display: none;">Loading, please wait…</div>
+													<table data-toggle="table" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-search="true" data-select-item-name="toolbar1" data-pagination="true" data-sort-name="name" data-sort-order="desc" class="table table-hover" style="overflow-x: auto; margin-top: 0px;">
+														<thead>
+															<tr>
+																<th style="">
+																	<div data-field="id" class="th-inner sortable">Book ID</div>
+																	<div class="fht-cell"></div>
+																</th>
+
+																<th style="">
+																	<div data-field="id" class="th-inner sortable">Book</div>
+																	<div class="fht-cell"></div>
+																</th>
+
+																<th style="">
+																	<div data-field="name" class="th-inner sortable">Student Name</div>
+																	<div class="fht-cell"></div>
+																</th> 
+																<th style="">
+																	<div data-field="price" class="th-inner sortable">Borrowed on:</div>
+																	<div class="fht-cell"></div>
+																</th>
+																<th style="">
+																	<div data-field="price" class="th-inner sortable">Return request at:</div>
+																	<div class="fht-cell"></div>
+																</th>
+																<th style="">
+																	<div data-field="price" class="th-inner sortable">Due Date:</div>
+																	<div class="fht-cell"></div>
+																</th>
+																<th style="">
+																	<div data-field="availability" class="th-inner sortable">Availability</div>
+																	<div class="fht-cell"></div>
+																</th>
+																<th style="">
+																	<div data-field="decision" class="th-inner sortable">Decision</div>
+																	<div class="fht-cell"></div>
+																</th>
+															</tr>
+														</thead>
+														<tbody>
+															<?php 
+															if(isset($_POST['manage_search']))
+															{
+																$q9=$_POST['manage_search'];
+																$sql3="Select * from borrow_requests where roll_id like '%{$q9}%' or book_id like '%{$q9}%'";
+															}
+															else
+															{
+																$sql3="Select * from borrow_requests where status = 'Return Approval' ";
+															}
+															$query3=mysqli_query($conn,$sql3);
+															$found=mysqli_num_rows($query3);
+															if(!$found)
+															{
+																echo "<div class=\"col-md-12 panel panel-default\"><h4>--No borrow requests :(--</h4></div";
+															}
+															else
+															{
+																while($found=mysqli_fetch_array($query3,MYSQLI_ASSOC))
+																{
+																	$bid=$found['book_id'];
+																	$rid=$found['roll_id'];
+																	$sql4="Select * from books_master where access_code='$bid' ";
+																	$sql5="Select * from students where roll_id='$rid'";
+																	$q4=mysqli_query($conn,$sql4);
+																	$result4=mysqli_fetch_assoc($q4);
+																	$q5=mysqli_query($conn,$sql5);
+																	$result5=mysqli_fetch_assoc($q5);
+																	$class="info";
+																	if($result4['availability']=="Available")
+																		{$class="success";}
+																	if($result4['availability']=="Missing")
+																		{$class="warning";}
+																	if($result4['availability']=="Issued")
+																		{$class="danger";}	
+																	?>
+																	<tr data-index="0">
+																		<td style=""><?php echo $result4['access_code'];?></td>
+																		<td style=""><?php echo $result4['name'] . " by " . $result4['author'];?></td>
+																		<td style=""><?php echo $result5['name'];?></td>
+																		<td style=""><?php echo $result4['borrowed_at'];?></td>
+																		<td style=""><?php echo $found['requested_at'];?></td>
+																		<td style=""><?php echo $result4['due_date'];?></td>
+																		<td style=""><button type="button" href="#" class="btn btn-sm btn-<?php echo $class;?>"><?php echo $result4['availability'];?></button></td>
+																		<td style=""><button type="button" style="margin-bottom:5px;" class="btn-sm btn-success"><a onclick="return confirm('Are you sure?')" href="delete.php?id=<?php echo $result4['access_code']."&roll=". $rid."&decision=return";?>">Approve</a></button>
+																			<button type="button" style="display: inline-block; padding: 5px;" href="#" class="btn-sm btn-danger"><a onclick="return confirm('Are you sure?')" href="delete.php?id=<?php echo $result4['access_code']."&roll=". $rid."&decision=returnNO";?>">Decline</a></button></td>
+																		</tr>
+																		<?php
+																	}
+																}
+																?>
+															</tbody>
+														</table>
+													</div>
+													<div class="fixed-table-pagination">
+														<div class="pull-left pagination-detail">
+															<span class="pagination-info">Showing 1 to 10 of 21 rows</span>
+															<span class="page-list">
+																<span class="btn-group dropup">
+																	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="page-size">10</span> <span class="caret"></span></button>
+																	<ul class="dropdown-menu" role="menu">
+																		<li class="active"><a href="javascript:void(0)">10</a></li>
+																		<li><a href="javascript:void(0)">25</a></li>
+																		<li><a href="javascript:void(0)">50</a></li>
+																		<li><a href="javascript:void(0)">100</a></li>
+																	</ul>
+																</span>
+																records per page
+															</span>
+														</div>
+														<div class="pull-right pagination">
+															<ul class="pagination">
+																<li class="page-first disabled"><a href="javascript:void(0)">&lt;&lt;</a></li>
+																<li class="page-pre disabled"><a href="javascript:void(0)">&lt;</a></li>
+																<li class="page-number active disabled"><a href="javascript:void(0)">1</a></li>
+																<li class="page-number"><a href="javascript:void(0)">2</a></li>
+																<li class="page-number"><a href="javascript:void(0)">3</a></li>
+																<li class="page-next"><a href="javascript:void(0)">&gt;</a></li>
+																<li class="page-last"><a href="javascript:void(0)">&gt;&gt;</a></li>
+															</ul>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="clearfix"></div>
+										</div>
+									</div>
+								</div>		
+								<div class="col-lg-12" id="registerTable" style="display: none;">
+									<div class="panel panel-default">
+										<div class="panel-heading">Registration Approvals</div>
+										<div class="panel-body">
+											<div class="bootstrap-table" style="">
+												<div class="fixed-table-toolbar" >
+													<div class="columns btn-group pull-right">
+														<button class="btn btn-default" type="button" name="refresh" title="Refresh"><i class="glyphicon glyphicon-refresh icon-refresh"></i></button><button class="btn btn-default" type="button" name="toggle" title="Toggle"><i class="glyphicon glyphicon glyphicon-list-alt icon-list-alt"></i></button>
+														<div class="keep-open btn-group" title="Columns">
+															<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="glyphicon glyphicon-th icon-th"></i> <span class="caret"></span></button>
+															<ul class="dropdown-menu" role="menu">
+																<li><label><input type="checkbox" data-field="id" value="1" checked="checked">Roll ID</label></li>
+																<li><label><input type="checkbox" data-field="name" value="2" checked="checked">Student Name</label></li>
+																<li><label><input type="checkbox" data-field="price" value="3" checked="checked">Availability</label></li>
+															</ul>
+														</div>
+													</div>
+													<div class="pull-right search"><input class="form-control" method="post" name="borrow_search" type="text" placeholder="Search"></div> 
+												</div>
+												<div class="fixed-table-container">
+													<div class="fixed-table-header">
+														<table></table>
+													</div>
+													<div class="fixed-table-body">
+														<div class="fixed-table-loading" style="top: 37px; display: none;">Loading, please wait…</div>
+														<table data-toggle="table" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-search="true" data-select-item-name="toolbar1" data-pagination="true" data-sort-name="name" data-sort-order="desc" class="table table-hover" style="overflow-x: auto; margin-top: 0px;">
+															<thead>
+																<tr>
+																	<th style="">
+																		<div data-field="id" class="th-inner sortable">Roll Number</div>
+																		<div class="fht-cell"></div>
+																	</th>
+
+																	<th style="">
+																		<div data-field="id" class="th-inner sortable">Student Name</div>
+																		<div class="fht-cell"></div>
+																	</th>
+
+																	<th style="">
+																		<div data-field="name" class="th-inner sortable">Year</div>
+																		<div class="fht-cell"></div>
+																	</th>
+																	<th style="">
+																		<div data-field="decision" class="th-inner sortable">Decision</div>
+																		<div class="fht-cell"></div>
+																	</th>
+																</tr>
+															</thead>
+															<tbody>
+																<?php 
+																if(isset($_POST['borrow_search']))
+																{
+																	$q9=$_POST['borrow_search'];
+																	$sql3="Select * from students where roll_id like '%{$q9}%' or name like '%{$q9}%'";
+																}
+																else
+																{
+																	$sql3="Select * from students where approved='no' ";
+																}
+																$query3=mysqli_query($conn,$sql3);
+																$found=mysqli_num_rows($query3);
+																if(!$found)
 																{
 																	echo "<div class=\"col-md-12 panel panel-default\"><h4>--No registration approval requests :(--</h4></div";
 																}
 																else
 																{
-																	while($found2=mysqli_fetch_array($query5,MYSQLI_ASSOC))
-
+																	while($found=mysqli_fetch_array($query3,MYSQLI_ASSOC))
 																	{
-																		$y=$found2['roll_id'];
-																		$xy="Select * from students where roll_id='$y'";
-																		$qxy=mysqli_query($conn,$xy);
-																		$x=mysqli_fetch_assoc($qxy);
 																		?>
-																		
-																		<td style="align-content: center; padding-top: 20px;"><a href="#"><i class="fa fa-times" aria-hidden="true"></i></a></td>
-																		<td style=""><?php echo $found2['name'];?></td>
-																		<td style=""><?php echo $found2['author'];?></td>
-																		<td style=""><?php echo $found2['publisher'];?></td>
-																		<td style=""><?php echo $x['roll_id']."-".$x['name'];?></td>
-																	</tr>
-																	<?php
-																}
-															}?>
-														</tbody>
-													</table>
+																		<tr data-index="0">
+																			<td style=""><?php echo $found['roll_id'];?></td>
+																			<td style=""><?php echo $found['name'];?></td>
+																			<td style=""><?php echo $found['year'];?></td>
+																			<td style=""><button type="button" href="#" style="margin-bottom:5px;" class="btn-sm btn-success"><a onclick="return confirm('Are you sure?')" href="approve.php?id=<?php echo $found['roll_id']."&decision=YES";?>">Approve</a></button>
+																				<button type="button" style="display: inline-block; padding: 5px;" href="#" class="btn-sm btn-danger"><a onclick="return confirm('Are you sure?')" href="approve.php?id=<?php echo $found['roll_id']."&decision=NO";?>">Decline</a></button></td>
+																			</tr>
+																			<?php
+																		}
+																	}
+																	?>
+																</tbody>
+															</table>
+														</div>
+														<div class="fixed-table-pagination">
+															<div class="pull-left pagination-detail">
+																<span class="pagination-info">Showing 1 to 10 of 21 rows</span>
+																<span class="page-list">
+																	<span class="btn-group dropup">
+																		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="page-size">10</span> <span class="caret"></span></button>
+																		<ul class="dropdown-menu" role="menu">
+																			<li class="active"><a href="javascript:void(0)">10</a></li>
+																			<li><a href="javascript:void(0)">25</a></li>
+																			<li><a href="javascript:void(0)">50</a></li>
+																			<li><a href="javascript:void(0)">100</a></li>
+																		</ul>
+																	</span>
+																	records per page
+																</span>
+															</div>
+															<div class="pull-right pagination">
+																<ul class="pagination">
+																	<li class="page-first disabled"><a href="javascript:void(0)">&lt;&lt;</a></li>
+																	<li class="page-pre disabled"><a href="javascript:void(0)">&lt;</a></li>
+																	<li class="page-number active disabled"><a href="javascript:void(0)">1</a></li>
+																	<li class="page-number"><a href="javascript:void(0)">2</a></li>
+																	<li class="page-number"><a href="javascript:void(0)">3</a></li>
+																	<li class="page-next"><a href="javascript:void(0)">&gt;</a></li>
+																	<li class="page-last"><a href="javascript:void(0)">&gt;&gt;</a></li>
+																</ul>
+															</div>
+														</div>
+													</div>
 												</div>
+												<div class="clearfix"></div>
 											</div>
 										</div>
-										<div class="clearfix"></div>
 									</div>
-								</div>
-							</div>
-							<!-- Main Container -->
 
-							<div class="col-sm-12">
-								<p class="back-link">&copy CMSA-Library 2017 By <a href="https://github.com/soumyankar" target="_blank"> Soumyankar Mohapatra</a></p>
-							</div>
-						</div><!--/.row-->
-					</div>	<!--/.main-->
+									<div class="col-lg-12" id="additionTable" style="display: none;">
+										<div class="panel panel-default">
+											<div class="panel-heading">Book Addition Requests</div>
+											<div class="panel-body">
+												<div class="bootstrap-table" style="">
+													<div class="fixed-table-toolbar" >
+														<div class="columns btn-group pull-right">
+															<button class="btn btn-default" type="button" name="refresh" title="Refresh"><i class="glyphicon glyphicon-refresh icon-refresh"></i></button><button class="btn btn-default" type="button" name="toggle" title="Toggle"><i class="glyphicon glyphicon glyphicon-list-alt icon-list-alt"></i></button>
+															<div class="keep-open btn-group" title="Columns">
+																<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="glyphicon glyphicon-th icon-th"></i> <span class="caret"></span></button>
+																<ul class="dropdown-menu" role="menu">
+																	<li><label><input type="checkbox" data-field="id" value="1" checked="checked">Roll ID</label></li>
+																	<li><label><input type="checkbox" data-field="name" value="2" checked="checked">Student Name</label></li>
+																	<li><label><input type="checkbox" data-field="price" value="3" checked="checked">Availability</label></li>
+																</ul>
+															</div>
+														</div>
+														<div class="pull-right search"><input class="form-control" name="addition_search" method="post" type="text" placeholder="Search"></div>
+													</div>
+													<div class="fixed-table-container">
+														<div class="fixed-table-header">
+															<table></table>
+														</div>
+														<div class="fixed-table-body">
+															<div class="fixed-table-loading" style="top: 37px; display: none;">Loading, please wait…</div>
+															<table data-toggle="table" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-search="true" data-select-item-name="toolbar1" data-pagination="true" data-sort-name="name" data-sort-order="desc" class="table table-hover" style="overflow-x: auto; margin-top: 0px;">
+																<thead>
+																	<tr>
+																		<th style=""></th>
+																		<th style="">
+																			<div data-field="id" class="th-inner sortable">Book Name</div>
+																			<div class="fht-cell"></div>
+																		</th>
 
-					<script src="dashboard/js/jquery-1.11.1.min.js"></script>
-					<script src="dashboard/js/bootstrap.min.js"></script>
-					<script src="dashboard/js/custom.js"></script>
-					<script type="text/javascript">
-						function test()
-						{
-							window.confirm("Approve borrow request?");
-						}
-					</script>
+																		<th style="">
+																			<div data-field="id" class="th-inner sortable">Author</div>
+																			<div class="fht-cell"></div>
+																		</th>
 
-				</body>
-				</html>
+																		<th style="">
+																			<div data-field="name" class="th-inner sortable">Publisher</div>
+																			<div class="fht-cell"></div>
+																		</th>
+
+																		<th style="">
+																			<div data-field="name" class="th-inner sortable">Requested by</div>
+																			<div class="fht-cell"></div>
+																		</th>
+																	</tr>
+																</thead>
+																<tbody>
+																	<?php 
+																	if(isset($_POST['addition_search']))
+																	{
+																		$q10=$_POST['borrow_search'];
+																		$sql5="Select * from book_requests where roll_id like '%{$q10}%' or name like '%{$q10}%'";
+																	}
+																	else
+																	{
+																		$sql5="Select * from book_requests ";
+																	}
+																	$query5=mysqli_query($conn,$sql5);
+																	$found2=mysqli_num_rows($query5);
+																	?>
+																	<tr data-index="0">
+																		<?php
+																		if(!$found2)
+																		{
+																			echo "<div class=\"col-md-12 panel panel-default\"><h4>--No registration approval requests :(--</h4></div";
+																		}
+																		else
+																		{
+																			while($found2=mysqli_fetch_array($query5,MYSQLI_ASSOC))
+
+																			{
+																				$y=$found2['roll_id'];
+																				$xy="Select * from students where roll_id='$y'";
+																				$qxy=mysqli_query($conn,$xy);
+																				$x=mysqli_fetch_assoc($qxy);
+																				?>
+
+																				<td style="align-content: center; padding-top: 20px;"><a href="#"><i class="fa fa-times" aria-hidden="true"></i></a></td>
+																				<td style=""><?php echo $found2['name'];?></td>
+																				<td style=""><?php echo $found2['author'];?></td>
+																				<td style=""><?php echo $found2['publisher'];?></td>
+																				<td style=""><?php echo $x['roll_id']."-".$x['name'];?></td>
+																			</tr>
+																			<?php
+																		}
+																	}?>
+																</tbody>
+															</table>
+														</div>
+													</div>
+												</div>
+												<div class="clearfix"></div>
+											</div>
+										</div>
+									</div>
+									<!-- Main Container -->
+
+									<div class="col-sm-12">
+										<p class="back-link">&copy CMSA-Library 2017 By <a href="https://github.com/soumyankar" target="_blank"> Soumyankar Mohapatra</a></p>
+									</div>
+								</div><!--/.row-->
+							</div>	<!--/.main-->
+
+							<script src="dashboard/js/jquery-1.11.1.min.js"></script>
+							<script src="dashboard/js/bootstrap.min.js"></script>
+							<script src="dashboard/js/custom.js"></script>
+							<script type="text/javascript">
+								function test()
+								{
+									window.confirm("Approve borrow request?");
+								}
+							</script>
+							<script type="text/javascript">
+							function toggleTable() {
+   							 var lTable = document.getElementById("registerTable");
+    						lTable.style.display = (lTable.style.display == "block") ? "none" : "block";
+    						var sTable= document.getElementById("borrowTable");
+    						sTable.style.display=(sTable.style.display == "block") ? "none" : "none";
+    						var tTable= document.getElementById("returnTable");
+    						tTable.style.display=(tTable.style.display == "block") ? "none" : "none";
+    						var xTable= document.getElementById("additionTable");
+    						xTable.style.display=(xTable.style.display == "block") ? "none" : "none";
+							}
+							</script>
+
+							<script type="text/javascript">
+							function toggleTable2() {
+   							 var lTable = document.getElementById("registerTable");
+    						lTable.style.display = (lTable.style.display == "block") ? "none" : "none";
+    						var sTable= document.getElementById("borrowTable");
+    						sTable.style.display=(sTable.style.display == "block") ? "none" : "block";
+    						var tTable= document.getElementById("returnTable");
+    						tTable.style.display=(tTable.style.display == "block") ? "none" : "none";
+    						var xTable= document.getElementById("additionTable");
+    						xTable.style.display=(xTable.style.display == "block") ? "none" : "none";
+							}
+							</script>
+
+							<script type="text/javascript">
+							function toggleTable3() {
+   							 var lTable = document.getElementById("registerTable");
+    						lTable.style.display = (lTable.style.display == "block") ? "none" : "none";
+    						var sTable= document.getElementById("borrowTable");
+    						sTable.style.display=(sTable.style.display == "block") ? "none" : "none";
+    						var tTable= document.getElementById("returnTable");
+    						tTable.style.display=(tTable.style.display == "block") ? "none" : "block";
+    						var xTable= document.getElementById("additionTable");
+    						xTable.style.display=(xTable.style.display == "block") ? "none" : "none";
+							}
+							</script>
+
+							<script type="text/javascript">
+							function toggleTable4() {
+   							 var lTable = document.getElementById("registerTable");
+    						lTable.style.display = (lTable.style.display == "block") ? "none" : "none";
+    						var sTable= document.getElementById("borrowTable");
+    						sTable.style.display=(sTable.style.display == "block") ? "none" : "none";
+    						var tTable= document.getElementById("returnTable");
+    						tTable.style.display=(tTable.style.display == "block") ? "none" : "none";
+    						var xTable= document.getElementById("additionTable");
+    						xTable.style.display=(xTable.style.display == "block") ? "none" : "block";
+							}
+							</script>
+						</body>
+						</html>

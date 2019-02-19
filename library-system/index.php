@@ -138,8 +138,24 @@ if(isset($_POST['register'])){
           </div> 
           <form id="login_form" method="post" name="sentMessage" novalidate="novalidate">
             <div class="form-group">
-              <input class="form-control" id="login_roll" type="text" placeholder="Username/Roll-Number" required="required" data-validation-required-message="Please enter your name.">
+              <h5>Login Credentials:</h5>
+              <div style="display: inline-flex;">
+              <select class="dropdown form-control" style="width: 30%; margin-right: 10px;" id="login_roll_year" name="roll_year">
+                  <option class="form-control" value="">--</option>
+                  <option class="form-control" value="14S">14S-</option>
+                  <option class="form-control" value="14S">15S-</option>
+                  <option  class="form-control" value="16S">16S-</option>
+                  <option  class="form-control" value="17S">17S-</option>
+                  <option  class="form-control" value="18S">18S-</option>
+                  <option  class="form-control" value="19S">19S-</option>
+                  <option  class="form-control" value="20S">20S-</option>
+                  <option  class="form-control" value="21S">21S-</option>
+                  <option  class="form-control" value="22S">22S-</option>
+                  <option  class="form-control" value="23S">23S-</option>
+                </select>
+              <input class="form-control" id="login_roll" style="width: 100%;" type="text" placeholder="Roll-Number" required="required" data-validation-required-message="Please enter your name.">
               <p class="help-block text-danger"></p>
+              </div>
             </div>
             <div class="form-group">
               <input class="form-control" id="login_password" type="password" placeholder="**********" required="required" data-validation-required-message="Please enter your email address.">
@@ -174,7 +190,7 @@ if(isset($_POST['register'])){
             <div class="form-group">
               <h5>Roll-Number:</h5>
               <div style="display: inline-flex;">
-                <select class="dropdown form-control" style="width: 40%;" id="roll_year" name="roll_year">
+                <select class="dropdown form-control" style="width: 30%; margin-right: 10px;" id="roll_year" name="roll_year">
                   <option class="form-control" value="">--</option>
                   <option class="form-control" value="14S">14S-</option>
                   <option class="form-control" value="14S">15S-</option>
@@ -187,7 +203,7 @@ if(isset($_POST['register'])){
                   <option  class="form-control" value="22S">22S-</option>
                   <option  class="form-control" value="23S">23S-</option>
                 </select>
-                <input class="form-control" id="roll" name="roll" style="width: 60%;" type="text" placeholder="Roll-Number" required="required" data-validation-required-message="Please enter your Roll-Number">
+                <input class="form-control" id="roll" name="roll" style="width: 100%;" type="text" placeholder="Roll-Number" required="required" data-validation-required-message="Please enter your Roll-Number">
                 <p class="help-block text-danger"></p>
               </div>
             </div>
@@ -317,8 +333,10 @@ if(y[0]=='registered')
   $('#login_submit').click(function() {
 
     var pass = $('#login_password').val();
-    var roll = $('#login_roll').val();
-
+    var year = $('#login_roll_year').val();
+    var rollno = $('#login_roll').val();
+    var roll = year + "-" + rollno;
+    // console.log(roll);
     //    var salt = "HighSecurity";
     //       var strMD5 = $.md5(pass);
       // var strMD52 = $.md5(salt);
